@@ -99,10 +99,6 @@ end)
 -- To get the state of the toggle you do toggle.Value
 
 -- Calls the passed function when the toggle is updated
-Toggles.AutoGreen:OnChanged(function()
-    -- here we get our toggle object & then get its value
-    print('AutoGreen changed to:', Toggles.AutoGreen.Value)
-end)
 
 -- This should print to the console: "My toggle state changed! New value: false"
 --Toggles.AutoGreen:SetValue(false)
@@ -179,19 +175,22 @@ LeftGroupBox:AddInput('AimbotKey', {
     -- MaxLength is also an option which is the max length of the text
 })
 
-if Toggles.AutoGreen.Value == true then
-    autogreenenabled = true
-    Mouse.KeyDown:Connect(function(Key)
-        if Key == Options.AimbotKey.Value and autogreenenabled == true then
-            print('shoot')
-            game:GetService("ReplicatedStorage").GameEvents.ClientAction:FireServer('Shoot',true)
-            wait(Options.MySlider.Value)
-            game:GetService("ReplicatedStorage").GameEvents.ClientAction:FireServer('Shoot',false)
-        end  
-    end)
-else
-    autogreenenabled = false
-end
+Toggles.AutoGreen:OnChanged(function()
+    if Toggles.AutoGreen.Value == true then
+        autogreenenabled = true
+        Mouse.KeyDown:Connect(function(Key)
+            if Key == Options.AimbotKey.Value and autogreenenabled == true then
+                print('shoot')
+                game:GetService("ReplicatedStorage").GameEvents.ClientAction:FireServer('Shoot',true)
+                wait(Options.MySlider.Value)
+                game:GetService("ReplicatedStorage").GameEvents.ClientAction:FireServer('Shoot',false)
+            end  
+        end)
+    elseif Toggles.AutoGreen.Value == false then
+        print("false")
+        autogreenenabled = false
+    end
+end)
 
 -- Options is a table added to getgenv() by the library
 -- You index Options with the specified index, in this case it is 'MySlider'
