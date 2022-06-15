@@ -8,6 +8,7 @@ local players = game:GetService("Players")
 local Mouse = Player:GetMouse()
 
 local autogreenenabled = false
+local autogreenenabled1 = false
 
 local Library = loadstring(game:HttpGet(repo .. 'Library.lua'))()
 local ThemeManager = loadstring(game:HttpGet(repo .. 'addons/ThemeManager.lua'))()
@@ -33,7 +34,7 @@ local Tabs = {
 
 -- Groupbox and Tabbox inherit the same functions
 -- except Tabboxes you have to call the functions on a tab (Tabbox:AddTab(name))
-local LeftGroupBox = Tabs.Main:AddLeftGroupbox('Aim Settings')
+local LeftGroupBox = Tabs.Main:AddLeftGroupbox('Auto Green')
 local RightGroupBox = Tabs.Main:AddRightGroupbox('Visuals')
 
 -- Tabboxes are a tiny bit different, but here's a basic example:
@@ -47,9 +48,15 @@ local Tab2 = TabBox:AddTab('Tab 2')
 -- Groupbox:AddToggle
 -- Arguments: Index, Options
 LeftGroupBox:AddToggle('AutoGreen', {
-    Text = 'Auto Green',
+    Text = 'Auto Shoot',
     Default = false, -- Default value (true / false)
-    Tooltip = 'Enables Auto Green', -- Information shown when you hover over the toggle
+    Tooltip = 'Enables Auto Shoot', -- Information shown when you hover over the toggle
+})
+
+LeftGroupBox:AddToggle('AutoLayup', {
+    Text = 'Auto Layup',
+    Default = false, -- Default value (true / false)
+    Tooltip = 'Enables Auto Layup', -- Information shown when you hover over the toggle
 })
 
 RightGroupBox:AddToggle('StreamerMode', {
@@ -141,19 +148,49 @@ LeftGroupBox:AddSlider('MySlider', {
     Compact = false, -- If set to true, then it will hide the label
 })
 
+LeftGroupBox:AddSlider('MySlider1', {
+    Text = 'Layup Delay',
+
+    -- Text, Default, Min, Max, Rounding must be specified.
+    -- Rounding is the number of decimal places for precision.
+
+    -- Example:
+    -- Rounding 0 - 5
+    -- Rounding 1 - 5.1
+    -- Rounding 2 - 5.15
+    -- Rounding 3 - 5.155
+
+    Default = 0.1,
+    Min = 0.1,
+    Max = 1,
+    Rounding = 2,
+
+    Compact = false, -- If set to true, then it will hide the label
+})
 
 LeftGroupBox:AddInput('AimbotKey', {
     Default = 'q',
     Numeric = false, -- true / false, only allows numbers
     Finished = false, -- true / false, only calls callback when you press enter
 
-    Text = 'Aimbot Key',
+    Text = 'Shooting Key',
     Tooltip = 'Only use lowercase.', -- Information shown when you hover over the textbox
 
     Placeholder = 'Your Aimbot Key', -- placeholder text when the box is empty
     -- MaxLength is also an option which is the max length of the text
 })
 
+LeftGroupBox:AddInput('AimbotKey1', {
+    Default = 'f',
+    Numeric = false, -- true / false, only allows numbers
+    Finished = false, -- true / false, only calls callback when you press enter
+
+    Text = 'Layup Key',
+    Tooltip = 'Only use lowercase.', -- Information shown when you hover over the textbox
+
+    Placeholder = 'Your Aimbot Key', -- placeholder text when the box is empty
+    -- MaxLength is also an option which is the max length of the text
+})
 
 -- Options is a table added to getgenv() by the library
 -- You index Options with the specified index, in this case it is 'MySlider'
@@ -339,5 +376,22 @@ Toggles.AutoGreen:OnChanged(function()
     elseif Toggles.AutoGreen.Value == false then
         print("false")
         autogreenenabled = false
+    end
+end)
+
+Toggles.AutoLayup:OnChanged(function()
+    if Toggles.AutoLayup.Value == true then
+        autogreenenabled1 = true
+        Mouse.KeyDown:Connect(function(Key)
+            if Key == Options.AimbotKey1.Value and autogreenenabled1 == true then
+                print('shoot')
+                game:GetService("ReplicatedStorage").GameEvents.ClientAction:FireServer('Shoot',true)
+                wait(Options.MySlider1.Value)
+                game:GetService("ReplicatedStorage").GameEvents.ClientAction:FireServer('Shoot',false)
+            end  
+        end)
+    elseif Toggles.AutoGreen.Value == false then
+        print("false")
+        autogreenenabled1 = false
     end
 end)
