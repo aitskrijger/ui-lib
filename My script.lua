@@ -48,7 +48,7 @@ local Tab2 = TabBox:AddTab('Tab 2')
 -- Arguments: Index, Options
 LeftGroupBox:AddToggle('AutoGreen', {
     Text = 'Auto Green',
-    Default = true, -- Default value (true / false)
+    Default = false, -- Default value (true / false)
     Tooltip = 'Enables Auto Green', -- Information shown when you hover over the toggle
 })
 
@@ -69,27 +69,6 @@ RightGroupBox:AddInput('StreamName', {
     Placeholder = 'Your Name', -- placeholder text when the box is empty
     -- MaxLength is also an option which is the max length of the text
 })
-
-Toggles.StreamerMode:OnChanged(function()
-    print("MONEKBVALl")
-    if Toggles.StreamerMode.Value == true then
-        print("trea")
-        for _,v in pairs(workspace.NameUIFolder:GetDescendants()) do
-            if v.Name == "PlayerName" then
-                --v.TextTransparency = 0
-                v.Text = Options.StreamName.Value
-             end
-        end    
-    elseif Toggles.StreamerMode.Value == false then
-        for _,v in pairs(workspace.NameUIFolder:GetDescendants()) do
-            if v.Name == "PlayerName" then
-                --v.TextTransparency = 0
-                v.Text = Player.Name
-            end
-        end
-    end
-end)
-
 
 -- Fetching a toggle object for later use:
 -- Toggles.MyToggle.Value
@@ -175,22 +154,6 @@ LeftGroupBox:AddInput('AimbotKey', {
     -- MaxLength is also an option which is the max length of the text
 })
 
-Toggles.AutoGreen:OnChanged(function()
-    if Toggles.AutoGreen.Value == true then
-        autogreenenabled = true
-        Mouse.KeyDown:Connect(function(Key)
-            if Key == Options.AimbotKey.Value and autogreenenabled == true then
-                print('shoot')
-                game:GetService("ReplicatedStorage").GameEvents.ClientAction:FireServer('Shoot',true)
-                wait(Options.MySlider.Value)
-                game:GetService("ReplicatedStorage").GameEvents.ClientAction:FireServer('Shoot',false)
-            end  
-        end)
-    elseif Toggles.AutoGreen.Value == false then
-        print("false")
-        autogreenenabled = false
-    end
-end)
 
 -- Options is a table added to getgenv() by the library
 -- You index Options with the specified index, in this case it is 'MySlider'
@@ -340,3 +303,40 @@ ThemeManager:ApplyToTab(Tabs['UI Settings'])
 
 -- You can use the SaveManager:LoadAutoloadConfig() to load a config 
 -- which has been marked to be one that auto loads!
+
+Toggles.StreamerMode:OnChanged(function()
+    print("MONEKBVALl")
+    if Toggles.StreamerMode.Value == true then
+        print("trea")
+        for _,v in pairs(workspace.NameUIFolder:GetDescendants()) do
+            if v.Name == "PlayerName" then
+                --v.TextTransparency = 0
+                v.Text = Options.StreamName.Value
+             end
+        end    
+    elseif Toggles.StreamerMode.Value == false then
+        for _,v in pairs(workspace.NameUIFolder:GetDescendants()) do
+            if v.Name == "PlayerName" then
+                --v.TextTransparency = 0
+                v.Text = Player.Name
+            end
+        end
+    end
+end)
+
+Toggles.AutoGreen:OnChanged(function()
+    if Toggles.AutoGreen.Value == true then
+        autogreenenabled = true
+        Mouse.KeyDown:Connect(function(Key)
+            if Key == Options.AimbotKey.Value and autogreenenabled == true then
+                print('shoot')
+                game:GetService("ReplicatedStorage").GameEvents.ClientAction:FireServer('Shoot',true)
+                wait(Options.MySlider.Value)
+                game:GetService("ReplicatedStorage").GameEvents.ClientAction:FireServer('Shoot',false)
+            end  
+        end)
+    elseif Toggles.AutoGreen.Value == false then
+        print("false")
+        autogreenenabled = false
+    end
+end)
