@@ -348,15 +348,21 @@ Toggles.StreamerMode:OnChanged(function()
         print("trea")
         for _,v in pairs(workspace.NameUIFolder:GetDescendants()) do
             if v.Name == "PlayerName" then
-                --v.TextTransparency = 0
-                v.Text = Options.StreamName.Value
+                if v.Name.Text == Player.Name then
+                    v.Text = Options.StreamName.Value
+                else
+                    v.TextTransparency = 0
+                end
              end
         end    
     elseif Toggles.StreamerMode.Value == false then
         for _,v in pairs(workspace.NameUIFolder:GetDescendants()) do
             if v.Name == "PlayerName" then
-                --v.TextTransparency = 0
-                v.Text = Player.Name
+                if v.Name.Text == Player.Name then
+                    v.Text = Player.Name
+                else
+                    v.TextTransparency = 0
+                end
             end
         end
     end
