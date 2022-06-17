@@ -325,24 +325,26 @@
     -- You can use the SaveManager:LoadAutoloadConfig() to load a config 
     -- which has been marked to be one that auto loads!
 
+    print("</i>"..Player.Name.."</i>")
+    local currentname = "<i>"..Player.Name.."</i>"
+    print(currentname)
 
     Toggles.StreamerMode:OnChanged(function()
-        print("MONEKBVALl")
         if Toggles.StreamerMode.Value == true then
             print("trea")
             for _,v in pairs(workspace.NameUIFolder:GetDescendants()) do
                 if v.Name == "PlayerName" then
-                    if v.Text == Player.Name then
-                        v.Text = Options.StreamName.Value
+                    if v.Text == currentname or v.Text == Player.Name then
+                        v.Text = Options.StreamName.Value   
                     else
-                        v.TextTransparency = 0
+                        v.Transparency = 1
                     end
                 end
             end    
         elseif Toggles.StreamerMode.Value == false then
             for _,v in pairs(workspace.NameUIFolder:GetDescendants()) do
                 if v.Name == "PlayerName" then
-                    if v.Text == Player.Name then
+                    if v.Text == Options.StreamName.Value or v.Text == "<i>"..Player.Name.."</i>" or v.Text == Player.Name then
                         v.Text = Player.Name
                     else
                         v.TextTransparency = 0
