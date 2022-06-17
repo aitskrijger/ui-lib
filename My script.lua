@@ -407,9 +407,7 @@
                 newmt.__index = function(a, b)
                     if tostring(a) == "Deep Shooter" then
                         if tostring(b) == "Value" then
-                            print('apkay')
                             return badgevalue;
-                            end
                         end
                     elseif tostring(a) == "Hot Shot" then
                         if tostring(b) == "Value" then
