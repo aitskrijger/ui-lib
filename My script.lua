@@ -9,7 +9,11 @@
     local Mouse = Player:GetMouse()
 
     local autogreenenabled = false
-    local autogreenenabled1 = false
+
+    local mt = getrawmetatable(game);
+    local newmt = mt
+    make_writeable(newmt);
+    local old_index = mt.__index;
 
     local Library = loadstring(game:HttpGet(repo .. 'Library.lua'))()
     local ThemeManager = loadstring(game:HttpGet(repo .. 'addons/ThemeManager.lua'))()
@@ -35,7 +39,8 @@
 
     -- Groupbox and Tabbox inherit the same functions
     -- except Tabboxes you have to call the functions on a tab (Tabbox:AddTab(name))
-    local LeftGroupBox = Tabs.Main:AddLeftGroupbox('Auto Green')
+    local LeftGroupBox = Tabs.Main:AddLeftGroupbox('Main')
+    local LeftGroupBox1 = Tabs.Main:AddLeftGroupbox('Misc')
     local RightGroupBox = Tabs.Main:AddRightGroupbox('Visuals')
 
     -- Tabboxes are a tiny bit different, but here's a basic example:
@@ -54,10 +59,15 @@
         Tooltip = 'Enables Auto Shoot', -- Information shown when you hover over the toggle
     })
 
-    LeftGroupBox:AddToggle('AutoLayup', {
-        Text = 'Auto Layup',
-        Default = false, -- Default value (true / false)
-        Tooltip = 'Enables Auto Layup', -- Information shown when you hover over the toggle
+    LeftGroupBox1:AddDropdown('Badge', {
+        Values = { 'Bronze', 'Silver', 'Gold', 'Diamond' },
+
+        Default = 1, 
+        Multi = false, -- true / false, allows multiple choices to be selected
+
+        Text = 'Badge Giver',
+        Tooltip = 'Choose What Badge U Want.', -- Information shown when you hover over the textbox
+
     })
 
     RightGroupBox:AddToggle('StreamerMode', {
@@ -149,25 +159,6 @@
         Compact = false, -- If set to true, then it will hide the label
     })
 
-    LeftGroupBox:AddSlider('MySlider1', {
-        Text = 'Layup Delay',
-
-        -- Text, Default, Min, Max, Rounding must be specified.
-        -- Rounding is the number of decimal places for precision.
-
-        -- Example:
-        -- Rounding 0 - 5
-        -- Rounding 1 - 5.1
-        -- Rounding 2 - 5.15
-        -- Rounding 3 - 5.155
-
-        Default = 0.1,
-        Min = 0.1,
-        Max = 1,
-        Rounding = 2,
-
-        Compact = false, -- If set to true, then it will hide the label
-    })
 
     LeftGroupBox:AddInput('AimbotKey', {
         Default = 'q',
@@ -175,18 +166,6 @@
         Finished = false, -- true / false, only calls callback when you press enter
 
         Text = 'Shooting Key',
-        Tooltip = 'Only use lowercase.', -- Information shown when you hover over the textbox
-
-        Placeholder = 'Your Aimbot Key', -- placeholder text when the box is empty
-        -- MaxLength is also an option which is the max length of the text
-    })
-
-    LeftGroupBox:AddInput('AimbotKey1', {
-        Default = 'f',
-        Numeric = false, -- true / false, only allows numbers
-        Finished = false, -- true / false, only calls callback when you press enter
-
-        Text = 'Layup Key',
         Tooltip = 'Only use lowercase.', -- Information shown when you hover over the textbox
 
         Placeholder = 'Your Aimbot Key', -- placeholder text when the box is empty
@@ -390,21 +369,6 @@
         end
     end)
 
-    Toggles.AutoLayup:OnChanged(function()
-        if Toggles.AutoLayup.Value == true then
-            autogreenenabled1 = true
-            Mouse.KeyDown:Connect(function(Key)
-                if Key == Options.AimbotKey1.Value and autogreenenabled1 == true then
-                    print('shoot')
-                    game:GetService("ReplicatedStorage").GameEvents.ClientAction:FireServer('Shoot',true)
-                    wait(Options.MySlider1.Value)
-                    game:GetService("ReplicatedStorage").GameEvents.ClientAction:FireServer('Shoot',false)
-                end  
-            end)
-        elseif Toggles.AutoGreen.Value == false then
-            autogreenenabled1 = false
-        end
-    end)
 
     uis.InputBegan:Connect(function(input)
         if Toggles.AutoGreen.Value == true then
@@ -421,4 +385,46 @@
                 autogreenenabled = false
             end
         end)
-
+        local badgevalue = 1
+        Options.Badge:OnChanged(function()
+            if Options.Badge.Value == "Bronze" then
+                badgevalue = 1
+            elseif Options.Badge.Value == "Silver" then
+                badgevalue = 2
+            elseif Options.Badge.Value == "Gold" then
+                badgevalue = 3
+            elseif Options.Badge.Value == "Diamond" then
+                badgevalue = 4
+            end
+        end) 
+        local canchange = true
+        
+        local MyButton = LeftGroupBox1:AddButton('Give Badges', function()
+            if canchange == false then 
+                canchange = true
+            else
+                canchange = false
+                newmt.__index = function(a, b)
+                    if tostring(a) == "Deep Shooter" then
+                        if tostring(b) == "Value" then
+                            print('apkay')
+                            return badgevalue;
+                            end
+                        end
+                    elseif tostring(a) == "Hot Shot" then
+                        if tostring(b) == "Value" then
+                            return badgevalue;
+                        end
+                    elseif tostring(a) == "Focus Shot" then
+                        if tostring(b) == "Value" then
+                            return badgevalue;
+                        end
+                    elseif tostring(a) == "Inside Shooter" then
+                        if tostring(b) == "Value" then
+                            return badgevalue;
+                        end
+                    end
+                    return old_index(a,b);
+                end
+            end
+        end)
